@@ -8,7 +8,6 @@ from models.reports import Report, ReportSchema
 
 users_bp = Blueprint('users', __name__, url_prefix='/users')
 
-
 @users_bp.route('/', methods=['GET'])
 def get_users():
     stmt = db.select(User)
@@ -54,6 +53,8 @@ def get_user_reports(user_id):
     stmt = db.select(Report).filter_by(user_id=user_id)
     reports = db.session.scalars(stmt).all()
     return ReportSchema(many=True, exclude=['user']).dump(reports), 200
+
+
 
 
 @users_bp.route('/register', methods=['POST'])

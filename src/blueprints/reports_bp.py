@@ -2,7 +2,7 @@ from flask import Blueprint, request
 from setup import db
 from models.reports import Report, ReportSchema
 
-reports_bp = Blueprint('reports', __name__, url_prefix = '/reports')
+reports_bp = Blueprint('reports', __name__)
 
 # Get all reports
 @reports_bp.route('/', methods=['GET'])
@@ -20,7 +20,6 @@ def get_report(id):
         return ReportSchema().dump(report), 200
     else:
         return {'error': 'Report not found'}, 404
-    
 
 # # Search reports
 # @reports_bp.route('/search', methods=['GET'])
