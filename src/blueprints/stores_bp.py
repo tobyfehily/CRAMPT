@@ -2,6 +2,9 @@ from flask import Blueprint, request
 from models.store import Store, StoreSchema
 from setup import db
 from models.reports import Report, ReportSchema
+from flask_jwt_extended import jwt_required
+from auth import authorise
+
 
 stores_bp = Blueprint('stores', __name__, url_prefix='/stores')
 
@@ -14,7 +17,9 @@ def get_stores():
 
 # Create a store
 @stores_bp.route('/', methods=['POST'])
+@jwt_required()
 def set_store():
+    authorise()
     store_info = StoreSchema(exclude=['id']).load(request.json)
     store = Store(
         name = store_info['name'],
@@ -27,12 +32,15 @@ def set_store():
         )
     db.session.add(store)
     db.session.commit()
-    return StoreSchema().dump(store), 201
+    return StoreSchema(exclude=['reports']).dump(store), 201
 
 # Update a store
 @stores_bp.route('/<int:id>', methods=['PUT', 'PATCH'])
+@jwt_required()
 def update_store(id):
+    authorise()
     store_info = StoreSchema().load(request.json)
+    print(store_info)
     stmt = db.select(Store).filter_by(id=id)
     store = db.session.scalar(stmt)
     if store:
@@ -50,7 +58,9 @@ def update_store(id):
 
 # Delete a store
 @stores_bp.route('/<int:id>', methods=['DELETE'])
+@jwt_required()
 def delete_store(id):
+    authorise()
     stmt = db.select(Store).filter_by(id=id)
     user = db.session.scalar(stmt)
     if user:
@@ -62,7 +72,20 @@ def delete_store(id):
     
 # Get a store's reports
 @stores_bp.route('/<int:store_id>/reports', methods=['GET'])
+@jwt_required()
 def get_store_reports(store_id):
+    authorise()
     stmt = db.select(Report).filter_by(store_id=store_id)
     reports = db.session.scalars(stmt).all()
-    return ReportSchema(many=True, exclude=['user']).dump(reports), 200
+    return ReportSchema(many=True).dump(reports), 200
+
+# Search stores
+@stores_bp.route('/search', methods=['GET'])
+def search_stores():
+    stmt = db.select(Store).filter(Store.aisle_width>request.args.get('aisle_width_min'))
+    stores = db.session.scalars(stmt).all()
+    print(stores)
+    if stores == []:
+        return {'error': 'No stores matching search criteria found.'}
+    else:
+        return StoreSchema(many=True, exclude=['reports']).dump(stores), 200

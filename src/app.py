@@ -9,4 +9,6 @@ app.register_blueprint(users_bp)
 app.register_blueprint(stores_bp)
 app.register_blueprint(reports_bp)
 
+
+
 print(app.url_map)

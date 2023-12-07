@@ -19,7 +19,7 @@ class Store(db.Model):
     reports = db.relationship('Report', back_populates='store', cascade="all, delete")
 
 class StoreSchema(ma.Schema):
-    reports = fields.Nested('ReportSchema', exclude=['store'], many=True)
+    reports = fields.Nested('ReportSchema', many=True)
     phone_number = fields.String(validate=And(
         Regexp('^[0-9]+$', error = "Phone number must contain only digits."),
         Length(equal=10, error = "Phone number must be 10 digits long.")
