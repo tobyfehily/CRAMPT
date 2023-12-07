@@ -11,6 +11,15 @@ def get_stores():
     stores = db.session.scalars(stmt).all()
     return StoreSchema(exclude=['reports'], many=True).dump(stores), 200
 
+@stores_bp.route('/<int:id>', methods=['GET'])
+def get_store(id):
+    stmt = db.select(Store).filter_by(id=id)
+    store = db.session.scalar(stmt)
+    if store:
+        return StoreSchema(exclude=['reports']).dump(store), 200
+    else:
+        return {'error': 'Store not found'}, 404
+
 @stores_bp.route('/', methods=['POST'])
 def set_store():
     store_info = StoreSchema(exclude=['id']).load(request.json)
