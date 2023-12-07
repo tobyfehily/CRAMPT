@@ -23,7 +23,7 @@ class Report(db.Model):
 class ReportSchema(ma.Schema):
     image = fields.URL(required=True)
     user = fields.Nested('UserSchema', only=['id', 'email'])
-    store = fields.Nested('CardSchema', only=['id', 'name', 'aisle_width'])
+    store = fields.Nested('StoreSchema', only=['id', 'name', 'aisle_width'])
 
     class Meta:
-        fields = ('id', 'name', 'address', 'suburb', 'state', 'email', 'phone number', 'user', 'store')
+        fields = ('id', 'aisle_width', 'image', 'date_created', 'user', 'store')

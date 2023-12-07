@@ -28,4 +28,4 @@ class StoreSchema(ma.Schema):
     email = fields.Email(required=True)
 
     class Meta:
-        fields = ('id', 'name', 'address', 'suburb', 'state', 'email', 'phone number', 'reports')
+        fields = ('id', 'name', 'address', 'suburb', 'state', 'email', 'phone number', 'reports', 'aisle_width')
