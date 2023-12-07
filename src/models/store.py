@@ -16,16 +16,16 @@ class Store(db.Model):
     phone_number = db.Column(db.String)
     aisle_width = db.Column(db.Integer)
 
-    reports = db.relationship('Report', back_populates='store')
+    reports = db.relationship('Report', back_populates='store', cascade="all, delete")
 
 class StoreSchema(ma.Schema):
     reports = fields.Nested('ReportSchema', exclude=['store'], many=True)
     phone_number = fields.String(validate=And(
-        Regexp('^0-9+$', error = "Phone number must contain only digits."),
+        Regexp('^[0-9]+$', error = "Phone number must contain only digits."),
         Length(equal=10, error = "Phone number must be 10 digits long.")
         )
     )
-    email = fields.Email(required=True)
+    # email = fields.Email(required=True)
 
     class Meta:
-        fields = ('id', 'name', 'address', 'suburb', 'state', 'email', 'phone number', 'reports', 'aisle_width')
+        fields = ('id', 'name', 'address', 'suburb', 'state', 'email', 'phone_number', 'reports', 'aisle_width')

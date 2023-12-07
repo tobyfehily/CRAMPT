@@ -9,7 +9,7 @@ users_bp = Blueprint('users', __name__, url_prefix='/users')
 def get_users():
     stmt = db.select(User)
     users = db.session.scalars(stmt).all()
-    return UserSchema(many=True, exclude=['password']).dump(users), 200
+    return UserSchema(many=True, exclude=['password', 'reports']).dump(users), 200
 
 @users_bp.route('/<int:id>', methods=['GET'])
 def get_user(id):
@@ -22,14 +22,14 @@ def get_user(id):
     
 @users_bp.route('/<int:id>', methods=['PUT', 'PATCH'])
 def update_user(id):
-    user_info = UserSchema().load(request.json)
+    user_info = UserSchema(exclude=['id', 'is_admin']).load(request.json)
     stmt = db.select(User).filter_by(id=id)
     user = db.session.scalar(stmt)
     if user:
         user.email = user_info.get('email', user.email)
         user.password = user_info.get('password', user.password)
         db.session.commit()
-        return UserSchema().dump(user)
+        return UserSchema(exclude=['id', 'is_admin', 'reports']).dump(user)
     else:
         return {'error': 'User not found'}, 404
     
