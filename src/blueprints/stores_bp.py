@@ -4,6 +4,8 @@ from setup import db
 from models.reports import Report, ReportSchema
 from flask_jwt_extended import jwt_required
 from auth import authorise
+from sqlalchemy.exc import IntegrityError
+
 
 
 stores_bp = Blueprint('stores', __name__, url_prefix='/stores')
@@ -20,19 +22,25 @@ def get_stores():
 @jwt_required()
 def set_store():
     authorise()
-    store_info = StoreSchema(exclude=['id']).load(request.json)
-    store = Store(
-        name = store_info['name'],
-        address = store_info['address'],
-        suburb = store_info['suburb'],
-        state = store_info['state'],
-        email = store_info.get('email', ''),
-        phone_number = store_info.get('phone_number', None),
-        aisle_width = store_info.get('aisle_width', None)
-        )
-    db.session.add(store)
-    db.session.commit()
-    return StoreSchema(exclude=['reports']).dump(store), 201
+    try:
+        store_info = StoreSchema(exclude=['id']).load(request.json)
+        store = Store(
+            name = store_info['name'],
+            address = store_info['address'],
+            suburb = store_info['suburb'],
+            state = store_info['state'],
+            email = store_info.get('email', ''),
+            phone_number = store_info.get('phone_number', None),
+            aisle_width = store_info.get('aisle_width', None)
+            )
+        db.session.add(store)
+        db.session.commit()
+        return StoreSchema(exclude=['reports']).dump(store), 201
+    except IntegrityError:
+        return {'error': 'Store with the same name already exists.'}, 409
+    except KeyError:
+        return {'error': 'Store missing required information.'}, 400
+
 
 # Update a store
 @stores_bp.route('/<int:id>', methods=['PUT', 'PATCH'])

@@ -73,7 +73,6 @@ def register():
         db.session.commit()
 
         return UserSchema(exclude=['password', 'reports', 'is_admin']).dump(user), 201
-    
     except IntegrityError:
         return {'error': 'Email address already in use.'}, 409
 

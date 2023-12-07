@@ -1,7 +1,16 @@
 from setup import db, ma
 from marshmallow import fields
-from marshmallow.validate import Regexp, And, Length
+from marshmallow.validate import Regexp, And, Length, OneOf, Email
 
+STATES = [
+    'Victoria', 
+    'New South Wales', 
+    'Queensland', 
+    'Western Australia', 
+    'Tasmania',
+    'Northern Territory',
+    'Australian Capital Territory'
+    ]
 
 class Store(db.Model):
     __tablename__ = 'stores'
@@ -25,7 +34,8 @@ class StoreSchema(ma.Schema):
         Length(equal=10, error = "Phone number must be 10 digits long.")
         )
     )
-    # email = fields.Email(required=True)
+    state = fields.String(validate=OneOf(STATES))
+    email = fields.String(validate=Email())
 
     class Meta:
         fields = ('id', 'name', 'address', 'suburb', 'state', 'email', 'phone_number', 'reports', 'aisle_width')

@@ -20,16 +20,19 @@ def get_reports():
 @reports_bp.route('/', methods=['POST'])
 @jwt_required()
 def create_report():
-    report_info = ReportSchema().load(request.json)
-    report = Report(
-        aisle_width = report_info['aisle_width'],
-        image = report_info.get('image'),
-        store_id = report_info['store_id'],
-        user_id = get_jwt_identity()
-        )
-    db.session.add(report)
-    db.session.commit()
-    return ReportSchema().dump(report), 201
+    try:
+        report_info = ReportSchema().load(request.json)
+        report = Report(
+            aisle_width = report_info['aisle_width'],
+            image = report_info.get('image'),
+            store_id = report_info['store_id'],
+            user_id = get_jwt_identity()
+            )
+        db.session.add(report)
+        db.session.commit()
+        return ReportSchema().dump(report), 201
+    except KeyError:
+        return {'error': 'Report missing required information.'}, 400
 
 # Update a report
 @reports_bp.route('/<int:id>', methods=['PUT', 'PATCH'])
