@@ -70,13 +70,13 @@ def db_seed():
             user_id = users[1].id,
             store_id = users[1].id,
             aisle_width = 43,
-            image = "placekitten.com/200"
+            image = "http://www.placekitten.com/100"
         ),
         Report(
             user_id = users[1].id,
             store_id = users[0].id,
             aisle_width = 44,
-            image = "placekitten.com/300"
+            image = "http://www.placekitten.com/100"
         )
     ]
     db.session.add_all(reports)

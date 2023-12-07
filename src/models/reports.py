@@ -1,6 +1,6 @@
 from setup import db, ma
 from marshmallow import fields
-from marshmallow.validate import Length
+from marshmallow.validate import URL
 from datetime import datetime
 
 
@@ -23,6 +23,8 @@ class Report(db.Model):
 class ReportSchema(ma.Schema):
     user = fields.Nested('UserSchema', only=['id', 'email'])
     store = fields.Nested('StoreSchema', only=['id', 'name', 'aisle_width'])
+    aisle_width = fields.Integer(strict=True)
+    image = fields.String(validate=URL())
 
     class Meta:
         fields = ('id', 'aisle_width', 'image', 'date_created', 'user_id', 'store_id')

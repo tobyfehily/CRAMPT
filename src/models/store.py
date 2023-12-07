@@ -34,8 +34,9 @@ class StoreSchema(ma.Schema):
         Length(equal=10, error = "Phone number must be 10 digits long.")
         )
     )
+    aisle_width = fields.Integer(strict=True)
     state = fields.String(validate=OneOf(STATES))
-    email = fields.String(validate=Email())
+    email = fields.Email(strict=True)
 
     class Meta:
         fields = ('id', 'name', 'address', 'suburb', 'state', 'email', 'phone_number', 'reports', 'aisle_width')

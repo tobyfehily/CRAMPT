@@ -21,7 +21,7 @@ def get_reports():
 @jwt_required()
 def create_report():
     try:
-        report_info = ReportSchema().load(request.json)
+        report_info = ReportSchema(exclude=['date_created']).load(request.json)
         report = Report(
             aisle_width = report_info['aisle_width'],
             image = report_info.get('image'),
@@ -38,7 +38,7 @@ def create_report():
 @reports_bp.route('/<int:id>', methods=['PUT', 'PATCH'])
 @jwt_required()
 def update_report(id):
-    report_info = ReportSchema().load(request.json)
+    report_info = ReportSchema(exclude=['date_created']).load(request.json)
     stmt = db.select(Report).filter_by(id=id)
     report = db.session.scalar(stmt)
     if report:
