@@ -53,27 +53,59 @@ Its benefits include reduced code cruft and increased productivity, as developer
 
 ### /users
 - **HTTP request verb**: GET
-- **Required data where applicable**: 
-- **Expected response data**: List of all users.
-- **Authentication methods where applicable**: Admin only
-
-### /users
-- **HTTP request verb**: POST
-- **Required data where applicable**: 
-- **Expected response data**: Create a new user
+- **Required data where applicable**: N/A
+- **Expected response data**: '200 OK', users excluding password, reports.
 - **Authentication methods where applicable**: Admin only
 
 ### /users/<int:user_id>
-- **HTTP request verb**: PATCH
-- **Required data where applicable**: 
-- **Expected response data**: Update a user, e.g., provide admin access
+- **HTTP request verb**: GET
+- **Required data where applicable**: N/A
+- **Expected response data**: '200 OK', user excluding password, reports.
+- **Authentication methods where applicable**: Admin only
+
+### /users/<int:user_id>
+- **HTTP request verb**: PUT, PATCH
+- **Required data where applicable**: Email and password
+- **Expected response data**: '200 OK', user email and password
 - **Authentication methods where applicable**: Admin only
 
 ### /users/<int:user_id>
 - **HTTP request verb**: DELETE
-- **Required data where applicable**: 
-- **Expected response data**: Delete a user
+- **Required data where applicable**: N/A
+- **Expected response data**: '200 OK', empty JSON string
 - **Authentication methods where applicable**: Admin only
+
+### /stores
+- **HTTP request verb**: GET
+- **Required data where applicable**: N/A
+- **Expected response data**: '200 OK', stores excluding reports
+- **Authentication methods where applicable**: N/A
+
+### /stores
+- **HTTP request verb**: POST
+- **Required data where applicable**: N/A
+- **Expected response data**: '201 Created', store including id, name, address, suburb, state, email, phone number and aisle width
+- **Authentication methods where applicable**: N/A
+
+### /stores/<int:store_id>
+- **HTTP request verb**: GET
+- **Required data where applicable**: N/A
+- **Expected response data**: '200 OK', store excluding reports
+- **Authentication methods where applicable**: N/A
+
+### /stores/<int:store_id>
+- **HTTP request verb**: PUT, PATCH
+- **Required data where applicable**: N/A
+- **Expected response data**: '200 OK', store including id, name, address, suburb, state, email, phone number and aisle width
+- **Authentication methods where applicable**: N/A
+
+### /stores/<int:store_id>
+- **HTTP request verb**: DELETE
+- **Required data where applicable**: N/A
+- **Expected response data**: '200 OK', empty JSON string
+- **Authentication methods where applicable**: Admin only
+
+
 
 ### /auth/register
 - **HTTP request verb**: POST
@@ -182,7 +214,11 @@ The following screenshots provide an indication of how development was organised
 ![Kanban, 6 December 2023](/docs/Kanban_20231206.png)
 *Kanban, 6 December 2023*
 
+![Kanban, 7 December 2023](/docs/Kanban_20231207.png)
+*Kanban, 7 December 2023*
+
 Detailed information about the daily progress of each task has been captured in the following `md` files:
 
 [6 December 2023](/docs/Kanban_20231206.md)
+[7 December 2023](/docs/Kanban_20231207.md)
 
