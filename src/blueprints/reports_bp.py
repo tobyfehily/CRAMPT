@@ -30,7 +30,7 @@ def create_report():
             )
         db.session.add(report)
         db.session.commit()
-        return ReportSchema().dump(report), 201
+        return ReportSchema(exclude=['user_id']).dump(report), 201
     except KeyError:
         return {'error': 'Report missing required information.'}, 400
 
@@ -47,7 +47,7 @@ def update_report(id):
         report.image = report_info.get('image', report.image),
         report.store_id  = report_info.get('store_id', report.store_id),
         db.session.commit()
-        return ReportSchema().dump(report)
+        return ReportSchema(exclude=['user_id']).dump(report)
     else:
         return {'error': 'Report not found'}, 404
 

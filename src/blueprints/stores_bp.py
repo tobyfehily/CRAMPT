@@ -87,7 +87,7 @@ def get_store_reports(store_id):
     reports = db.session.scalars(stmt).all()
     return ReportSchema(many=True).dump(reports), 200
 
-# Search stores
+# Search stores by minimum aisle width
 @stores_bp.route('/search', methods=['GET'])
 def search_stores():
     stmt = db.select(Store).filter(Store.aisle_width>request.args.get('aisle_width_min'))
