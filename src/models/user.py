@@ -12,7 +12,7 @@ class User(db.Model):
     password = db.Column(db.String, nullable=False)
     is_admin =  db.Column(db.Boolean, default=False)
 
-    reports = db.relationship('Report', back_populates='user')
+    reports = db.relationship('Report', back_populates='user', cascade="all, delete")
 
 class UserSchema(ma.Schema):
     reports = fields.Nested('ReportSchema', exclude=['user'], many=True)
