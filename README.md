@@ -55,32 +55,37 @@ Its benefits include reduced code cruft and increased productivity, as developer
 - **HTTP request verb**: GET
 - **Required data where applicable**: N/A
 - **Expected response data**: '200 OK', users excluding password, reports
-- **Authentication methods where applicable**: Admin only
+- **Authentication methods where applicable**: Admin only (JWT bearer token authentication)
 
 ### /users/<int:user_id>
-- **HTTP request verb**: GET
-- **Required data where applicable**: N/A
-- **Expected response data**: '200 OK', user excluding password, reports
-- **Authentication methods where applicable**: Admin only
-
-### /users/<int:user_id>
-- **HTTP request verb**: PUT, PATCH
+- **HTTP request verb**: PUT
 - **Required data where applicable**: Email and password
 - **Expected response data**: '200 OK', user email and password
-- **Authentication methods where applicable**: Admin only
+- **Authentication methods where applicable**: Admin or associated user only (JWT bearer token authentication)
 
 ### /users/<int:user_id>
 - **HTTP request verb**: DELETE
 - **Required data where applicable**: N/A
 - **Expected response data**: '200 OK', empty JSON string
-- **Authentication methods where applicable**: Admin only
+- **Authentication methods where applicable**: Admin or associated user only (JWT bearer token authentication)
+
+### /users/<int:user_id>/reports
+- **HTTP request verb**: GET
+- **Required data where applicable**: N/A
+- **Expected response data**: '200 OK', reports, including aisle width, date created, id, image and store id
+- **Authentication methods where applicable**: Admin or associated user only (JWT bearer token authentication)
 
 ### /users/register>
 - **HTTP request verb**: POST
 - **Required data where applicable**: Email, password
 - **Expected response data**: '201 created', user email, id
-- **Authentication methods where applicable**: Admin only
+- **Authentication methods where applicable**: N/A
 
+### /users/login>
+- **HTTP request verb**: POST
+- **Required data where applicable**: Email, password
+- **Expected response data**: '200 OK', user email, id, JWT bearer token
+- **Authentication methods where applicable**: N/A
 
 ### /stores
 - **HTTP request verb**: GET
@@ -90,68 +95,57 @@ Its benefits include reduced code cruft and increased productivity, as developer
 
 ### /stores
 - **HTTP request verb**: POST
-- **Required data where applicable**: N/A
-- **Expected response data**: '201 Created', store including id, name, address, suburb, state, email, phone number and aisle width
-- **Authentication methods where applicable**: N/A
-
-### /stores/<int:store_id>
-- **HTTP request verb**: GET
-- **Required data where applicable**: N/A
-- **Expected response data**: '200 OK', store excluding reports
-- **Authentication methods where applicable**: N/A
+- **Required data where applicable**: Name, address, suburb and state (optional: email, phone number, aisle width)
+- **Expected response data**: '201 Created', store including id, name, address, suburb, state, email, phone number, aisle width
+- **Authentication methods where applicable**: Admin only (JWT bearer token authentication)
 
 ### /stores/<int:store_id>
 - **HTTP request verb**: PUT, PATCH
-- **Required data where applicable**: N/A
+- **Required data where applicable**: Name, address, suburb, state, email, phone number or aisle width
 - **Expected response data**: '200 OK', store including id, name, address, suburb, state, email, phone number and aisle width
-- **Authentication methods where applicable**: N/A
+- **Authentication methods where applicable**: Admin only (JWT bearer token authentication)
 
 ### /stores/<int:store_id>
 - **HTTP request verb**: DELETE
 - **Required data where applicable**: N/A
 - **Expected response data**: '200 OK', empty JSON string
-- **Authentication methods where applicable**: Admin only
+- **Authentication methods where applicable**: Admin only (JWT bearer token authentication)
+
+### /stores/<int:user_id/reports>
+- **HTTP request verb**: GET
+- **Required data where applicable**: N/A
+- **Expected response data**: '200 OK', reports, including aisle width, date created, id, image and store id
+- **Authentication methods where applicable**: Admin only (JWT bearer token authentication)
+
+### /stores/search?=<int:aisle_width_min>
+- **HTTP request verb**: GET
+- **Required data where applicable**: N/A
+- **Expected response data**: '200 OK', stores with aisle width larger than `aisle_width_min`, including address, aisle width, email, store id, name, phone number, state and suburb
+- **Authentication methods where applicable**: Admin only (JWT bearer token authentication)
 
 ### /reports
 - **HTTP request verb**: GET
 - **Required data where applicable**: N/A
-- **Expected response data**: '200 OK', reports including aisle width, date created, image; store aisle width, id, name; user email, id
-- **Authentication methods where applicable**: Admin only
+- **Expected response data**: '200 OK', reports including aisle width, date created, id, image, store id, user id
+- **Authentication methods where applicable**: Admin only (JWT bearer token authentication)
+
+### /reports
+- **HTTP request verb**: POST
+- **Required data where applicable**: N/A
+- **Expected response data**: '201 Created', reports including aisle width, date created, image, store id, report id
+- **Authentication methods where applicable**: Admin or user only (JWT bearer token authentication)
+
+### /reports<int:report_id>
+- **HTTP request verb**: PUT, PATCH
+- **Required data where applicable**: N/A
+- **Expected response data**: '200 OK',  aisle width, date created, image, store id, report id
+- **Authentication methods where applicable**: Admin or associated user only (JWT bearer token authentication)
 
 ### /reports/<int:report_id>
-- **HTTP request verb**: GET
+- **HTTP request verb**: DELETE
 - **Required data where applicable**: N/A
-- **Expected response data**: '200 OK', report including aisle width, date created, image; store aisle width, id, name; user email, id
-- **Authentication methods where applicable**: Admin only
-
-
-
-
-### /auth/register
-- **HTTP request verb**: POST
-- **Required data where applicable**: 
-- **Expected response data**: Register as a user
-- **Authentication methods where applicable**: Admin only
-
-### /auth/login
-- **HTTP request verb**: POST
-- **Required data where applicable**: 
-- **Expected response data**: Login as a user
-- **Authentication methods where applicable**: Admin only
-
-### /reports
-- **HTTP request verb**: GET
-- **Required data where applicable**: 
-- **Expected response data**: List of all reports.
-- **Authentication methods where applicable**: Admin only
-
-### /stores
-- **HTTP request verb**: GET
-- **Required data where applicable**: 
-- **Expected response data**: List of all stores.
-- **Authentication methods where applicable**:
-
-### TO DO: more routes
+- **Expected response data**: '200 OK', empty JSON string
+- **Authentication methods where applicable**: Admin or associated user only (JWT bearer token authentication)
 
 
 ## An ERD for your app
@@ -184,9 +178,11 @@ Flask-JWT-Extended is a Python library that supports the use of JSON Web Tokens 
 
 
 ## Describe your projects models in terms of the relationships they have with each other
-
+SQLALCHEMY, FOREIGN KEYS
 
 ## Discuss the database relations to be implemented in your application
+DATABASE LEVEL, SQL
+
 The CRAMPT database comprises three tables: `users`, `reports` and `stores`.
 
 
@@ -240,6 +236,9 @@ The following screenshots provide an indication of how development was organised
 ![Kanban, 8 December 2023](/docs/Kanban_20231208.png)
 *Kanban, 8 December 2023*
 
+![Kanban, 12 December 2023](/docs/Kanban_20231212.png)
+*Kanban, 12 December 2023*
+
 Detailed information about the daily progress of each task has been captured in the following `md` files:
 
 [6 December 2023](/docs/Kanban_20231206.md)
@@ -247,4 +246,6 @@ Detailed information about the daily progress of each task has been captured in 
 [7 December 2023](/docs/Kanban_20231207.md)
 
 [8 December 2023](/docs/Kanban_20231208.md)
+
+[12 December 2023](/docs/Kanban_20231212.md)
 
