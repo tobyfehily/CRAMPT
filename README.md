@@ -54,13 +54,13 @@ Its benefits include reduced code cruft and increased productivity, as developer
 ### /users
 - **HTTP request verb**: GET
 - **Required data where applicable**: N/A
-- **Expected response data**: '200 OK', users excluding password, reports.
+- **Expected response data**: '200 OK', users excluding password, reports
 - **Authentication methods where applicable**: Admin only
 
 ### /users/<int:user_id>
 - **HTTP request verb**: GET
 - **Required data where applicable**: N/A
-- **Expected response data**: '200 OK', user excluding password, reports.
+- **Expected response data**: '200 OK', user excluding password, reports
 - **Authentication methods where applicable**: Admin only
 
 ### /users/<int:user_id>
@@ -74,6 +74,13 @@ Its benefits include reduced code cruft and increased productivity, as developer
 - **Required data where applicable**: N/A
 - **Expected response data**: '200 OK', empty JSON string
 - **Authentication methods where applicable**: Admin only
+
+### /users/register>
+- **HTTP request verb**: POST
+- **Required data where applicable**: Email, password
+- **Expected response data**: '201 created', user email, id
+- **Authentication methods where applicable**: Admin only
+
 
 ### /stores
 - **HTTP request verb**: GET
@@ -104,6 +111,19 @@ Its benefits include reduced code cruft and increased productivity, as developer
 - **Required data where applicable**: N/A
 - **Expected response data**: '200 OK', empty JSON string
 - **Authentication methods where applicable**: Admin only
+
+### /reports
+- **HTTP request verb**: GET
+- **Required data where applicable**: N/A
+- **Expected response data**: '200 OK', reports including aisle width, date created, image; store aisle width, id, name; user email, id
+- **Authentication methods where applicable**: Admin only
+
+### /reports/<int:report_id>
+- **HTTP request verb**: GET
+- **Required data where applicable**: N/A
+- **Expected response data**: '200 OK', report including aisle width, date created, image; store aisle width, id, name; user email, id
+- **Authentication methods where applicable**: Admin only
+
 
 
 

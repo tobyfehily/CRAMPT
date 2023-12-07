@@ -27,7 +27,7 @@ def get_report(id):
 def get_user_reports(id):
     stmt = db.select(Report).filter_by(user_id=id)
     reports = db.session.scalars(stmt).all()
-    return ReportSchema(many=True).dump(reports), 200
+    return ReportSchema(many=True, exclude=['user']).dump(reports), 200
 
 
 # # Search reports
