@@ -25,4 +25,4 @@ class ReportSchema(ma.Schema):
     store = fields.Nested('StoreSchema', only=['id', 'name', 'aisle_width'])
 
     class Meta:
-        fields = ('id', 'aisle_width', 'image', 'date_created', 'user', 'store')
+        fields = ('id', 'aisle_width', 'image', 'date_created', 'user_id', 'store_id')

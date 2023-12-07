@@ -8,12 +8,14 @@ from models.reports import Report, ReportSchema
 
 users_bp = Blueprint('users', __name__, url_prefix='/users')
 
+# Get all users
 @users_bp.route('/', methods=['GET'])
 def get_users():
     stmt = db.select(User)
     users = db.session.scalars(stmt).all()
     return UserSchema(many=True, exclude=['password', 'reports']).dump(users), 200
 
+# Get a user
 @users_bp.route('/<int:user_id>', methods=['GET'])
 def get_user(user_id):
     stmt = db.select(User).filter_by(id=user_id)
@@ -22,7 +24,8 @@ def get_user(user_id):
         return UserSchema(exclude=['password']).dump(user), 200
     else:
         return {'error': 'User not found'}, 404
-    
+
+# Update a user
 @users_bp.route('/<int:user_id>', methods=['PUT', 'PATCH'])
 def update_user(user_id):
     user_info = UserSchema(exclude=['id', 'is_admin']).load(request.json)
@@ -35,7 +38,8 @@ def update_user(user_id):
         return UserSchema(exclude=['id', 'is_admin', 'reports']).dump(user)
     else:
         return {'error': 'User not found'}, 404
-    
+
+# Delete a user   
 @users_bp.route('/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
     stmt = db.select(User).filter_by(id=user_id)
@@ -54,9 +58,7 @@ def get_user_reports(user_id):
     reports = db.session.scalars(stmt).all()
     return ReportSchema(many=True, exclude=['user']).dump(reports), 200
 
-
-
-
+# Register as a user
 @users_bp.route('/register', methods=['POST'])
 def register():
     try:
@@ -74,7 +76,8 @@ def register():
     
     except IntegrityError:
         return {'error': 'Email address already in use.'}, 409
-    
+
+# Log in as a user 
 @users_bp.route('/login', methods=['POST'])
 def login():
     user_info = UserSchema().load(request.json)

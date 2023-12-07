@@ -5,22 +5,14 @@ from models.reports import Report, ReportSchema
 
 stores_bp = Blueprint('stores', __name__, url_prefix='/stores')
 
-
+# Get all stores
 @stores_bp.route('/', methods=['GET'])
 def get_stores():
     stmt = db.select(Store)
     stores = db.session.scalars(stmt).all()
     return StoreSchema(exclude=['reports'], many=True).dump(stores), 200
 
-@stores_bp.route('/<int:id>', methods=['GET'])
-def get_store(id):
-    stmt = db.select(Store).filter_by(id=id)
-    store = db.session.scalar(stmt)
-    if store:
-        return StoreSchema(exclude=['reports']).dump(store), 200
-    else:
-        return {'error': 'Store not found'}, 404
-
+# Create a store
 @stores_bp.route('/', methods=['POST'])
 def set_store():
     store_info = StoreSchema(exclude=['id']).load(request.json)
@@ -37,6 +29,7 @@ def set_store():
     db.session.commit()
     return StoreSchema().dump(store), 201
 
+# Update a store
 @stores_bp.route('/<int:id>', methods=['PUT', 'PATCH'])
 def update_store(id):
     store_info = StoreSchema().load(request.json)
@@ -54,7 +47,8 @@ def update_store(id):
         return StoreSchema(exclude=['reports']).dump(store)
     else:
         return {'error': 'Store not found'}, 404
-    
+
+# Delete a store
 @stores_bp.route('/<int:id>', methods=['DELETE'])
 def delete_store(id):
     stmt = db.select(Store).filter_by(id=id)
