@@ -1,5 +1,6 @@
 from setup import db, ma
 from marshmallow import fields
+from marshmallow.validate import Regexp, And, Length
 
 
 class Store(db.Model):
@@ -19,6 +20,11 @@ class Store(db.Model):
 
 class StoreSchema(ma.Schema):
     reports = fields.Nested('ReportSchema', exclude=['store'], many=True)
+    phone_number = fields.String(validate=And(
+        Regexp('^0-9+$', error = "Phone number must contain only digits."),
+        Length(equal=10, error = "Phone number must be 10 digits long.")
+        )
+    )
     email = fields.Email(required=True)
 
     class Meta:
