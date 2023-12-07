@@ -237,8 +237,14 @@ The following screenshots provide an indication of how development was organised
 ![Kanban, 7 December 2023](/docs/Kanban_20231207.png)
 *Kanban, 7 December 2023*
 
+![Kanban, 8 December 2023](/docs/Kanban_20231208.png)
+*Kanban, 8 December 2023*
+
 Detailed information about the daily progress of each task has been captured in the following `md` files:
 
 [6 December 2023](/docs/Kanban_20231206.md)
+
 [7 December 2023](/docs/Kanban_20231207.md)
+
+[8 December 2023](/docs/Kanban_20231208.md)
 
