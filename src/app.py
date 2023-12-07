@@ -27,5 +27,9 @@ def authorisation_error(err):
 def method_not_allowed(err):
     return {'error': 'This HTTP method is not supported on this URL.'}, 405
 
+@app.errorhandler(400)
+def authorisation_error(err):
+    return {'error': "It's not me, it's you – you've made some kind of mistake."}, 401
+
 
 print(app.url_map)
