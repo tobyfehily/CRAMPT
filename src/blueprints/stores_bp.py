@@ -1,9 +1,10 @@
 from flask import Blueprint, request
 from models.store import Store, StoreSchema
 from setup import db
-
+from models.reports import Report, ReportSchema
 
 stores_bp = Blueprint('stores', __name__, url_prefix='/stores')
+
 
 @stores_bp.route('/', methods=['GET'])
 def get_stores():
@@ -64,3 +65,10 @@ def delete_store(id):
         return {}, 200
     else:
         return {'error': 'Store not found'}, 404    
+    
+# Get a store's reports
+@stores_bp.route('/<int:store_id>/reports', methods=['GET'])
+def get_store_reports(store_id):
+    stmt = db.select(Report).filter_by(store_id=store_id)
+    reports = db.session.scalars(stmt).all()
+    return ReportSchema(many=True, exclude=['user']).dump(reports), 200
