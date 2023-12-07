@@ -1,7 +1,9 @@
 from flask import Blueprint, request
 from models.user import User, UserSchema
-from setup import db
-
+from setup import db, bcrypt
+from sqlalchemy.exc import IntegrityError
+from flask_jwt_extended import create_access_token
+from datetime import timedelta
 
 users_bp = Blueprint('users', __name__, url_prefix='/users')
 
@@ -43,3 +45,34 @@ def delete_user(id):
         return {}, 200
     else:
         return {'error': 'User not found'}, 404
+    
+@users_bp.route('/register', methods=['POST'])
+def register():
+    try:
+        user_info = UserSchema(exclude=['id', 'is_admin']).load(request.json)
+        
+        user = User(
+            email=user_info['email'],
+            password=bcrypt.generate_password_hash(user_info["password"]).decode('utf8')
+        )
+
+        db.session.add(user)
+        db.session.commit()
+
+        return UserSchema(exclude=['password', 'reports', 'is_admin']).dump(user), 201
+    
+    except IntegrityError:
+        return {'error': 'Email address already in use.'}, 409
+    
+@users_bp.route('/login', methods=['POST'])
+def login():
+    user_info = UserSchema().load(request.json)
+
+    stmt = db.select(User).where(User.email==user_info["email"])
+    user = db.session.scalar(stmt)
+
+    if user and bcrypt.check_password_hash(user.password, user_info["password"]):
+        token = create_access_token(identity=user.id, expires_delta=timedelta(days=7))
+        return {'token': token, 'user': UserSchema(only=['email', 'id']).dump(user)}
+    else:
+        return {"error": "Invalid email or password."}, 409   

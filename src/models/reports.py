@@ -21,7 +21,6 @@ class Report(db.Model):
 
 
 class ReportSchema(ma.Schema):
-    image = fields.URL(required=True)
     user = fields.Nested('UserSchema', only=['id', 'email'])
     store = fields.Nested('StoreSchema', only=['id', 'name', 'aisle_width'])
 

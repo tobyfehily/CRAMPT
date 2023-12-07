@@ -37,7 +37,7 @@ def db_seed():
                 state = "Victoria",
                 email = "newmarket@chemistwarehouse.com.au",
                 phone_number = "0393767228",
-                aisle_width = 559
+                aisle_width = 53
             ),
             Store(
                 name = "Chemist Warehouse Ascot Vale",
@@ -54,7 +54,7 @@ def db_seed():
                 state = "New South Wales",
                 email = "newmarket@chemistwarehouse.com.au",
                 phone_number = "0292612305",
-                aisle_width = 600
+                aisle_width = 51
             )
     ]
     db.session.add_all(stores)
@@ -64,18 +64,18 @@ def db_seed():
         Report(
             user_id = users[0].id,
             store_id = users[0].id,
-            aisle_width = 677
+            aisle_width = 42
         ),
         Report(
             user_id = users[1].id,
             store_id = users[1].id,
-            aisle_width = 677,
+            aisle_width = 43,
             image = "placekitten.com/200"
         ),
         Report(
             user_id = users[1].id,
             store_id = users[0].id,
-            aisle_width = 678,
+            aisle_width = 44,
             image = "placekitten.com/300"
         )
     ]
