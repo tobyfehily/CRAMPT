@@ -4,8 +4,10 @@ from setup import db, bcrypt
 from sqlalchemy.exc import IntegrityError
 from flask_jwt_extended import create_access_token
 from datetime import timedelta
+from blueprints.reports_bp import user_reports_bp
 
 users_bp = Blueprint('users', __name__, url_prefix='/users')
+users_bp.register_blueprint(user_reports_bp, url_prefix='/<int:id>/reports')
 
 @users_bp.route('/', methods=['GET'])
 def get_users():

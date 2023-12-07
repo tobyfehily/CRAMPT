@@ -2,10 +2,11 @@ from flask import Blueprint, request
 from setup import db
 from models.reports import Report, ReportSchema
 
-reports_bp = Blueprint('reports', __name__, url_prefix='/reports')
+reports_bp = Blueprint('reports', __name__)
+user_reports_bp = Blueprint('user_reports', __name__)
 
 # Get all reports
-@reports_bp.route('', methods=['GET'])
+@reports_bp.route('/', methods=['GET'])
 def get_reports():
     stmt = db.select(Report)
     reports = db.session.scalars(stmt).all()
@@ -20,6 +21,13 @@ def get_report(id):
         return ReportSchema().dump(report), 200
     else:
         return {'error': 'Report not found'}, 404
+
+# Get a user's reports
+@user_reports_bp.route('/', methods=['GET'])
+def get_user_reports(id):
+    stmt = db.select(Report).filter_by(user_id=id)
+    reports = db.session.scalars(stmt).all()
+    return ReportSchema(many=True).dump(reports), 200
 
 
 # # Search reports

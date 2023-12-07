@@ -7,6 +7,6 @@ from blueprints.reports_bp import reports_bp
 app.register_blueprint(db_commands)
 app.register_blueprint(users_bp)
 app.register_blueprint(stores_bp)
-app.register_blueprint(reports_bp)
+app.register_blueprint(reports_bp, url_prefix='/reports')
 
 print(app.url_map)
