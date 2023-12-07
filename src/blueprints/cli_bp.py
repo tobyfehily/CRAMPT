@@ -2,6 +2,7 @@ from flask import Blueprint
 from setup import db, bcrypt
 from models.user import User
 from models.store import Store
+from models.reports import Report
 
 db_commands = Blueprint('db', __name__)
 
@@ -35,7 +36,8 @@ def db_seed():
                 suburb = "Flemington",
                 state = "Victoria",
                 email = "newmarket@chemistwarehouse.com.au",
-                phone_number = "0393767228"
+                phone_number = "0393767228",
+                aisle_width = 559
             ),
             Store(
                 name = "Chemist Warehouse Ascot Vale",
@@ -51,10 +53,33 @@ def db_seed():
                 suburb = "Sydney",
                 state = "New South Wales",
                 email = "newmarket@chemistwarehouse.com.au",
-                phone_number = "0292612305"
+                phone_number = "0292612305",
+                aisle_width = 600
             )
     ]
     db.session.add_all(stores)
+    db.session.commit()
+
+    reports = [
+        Report(
+            user_id = users[0].id,
+            store_id = users[0].id,
+            aisle_width = 677
+        ),
+        Report(
+            user_id = users[1].id,
+            store_id = users[1].id,
+            aisle_width = 677,
+            image = "placekitten.com/200"
+        ),
+        Report(
+            user_id = users[1].id,
+            store_id = users[0].id,
+            aisle_width = 678,
+            image = "placekitten.com/300"
+        )
+    ]
+    db.session.add_all(reports)
     db.session.commit()
 
     print('Database seeded.')
