@@ -57,25 +57,25 @@ Its benefits include reduced code cruft and increased productivity, as developer
 - **Expected response data**: '200 OK', users excluding password, reports
 - **Authentication methods where applicable**: Admin only (JWT bearer token authentication)
 
-### /users/<int:user_id>
+### /users/&lt;int:user_id&gt;
 - **HTTP request verb**: PUT
 - **Required data where applicable**: Email and password
 - **Expected response data**: '200 OK', user email and password
 - **Authentication methods where applicable**: Admin or associated user only (JWT bearer token authentication)
 
-### /users/<int:user_id>
+### /users/&lt;int:user_id&gt;
 - **HTTP request verb**: DELETE
 - **Required data where applicable**: N/A
 - **Expected response data**: '200 OK', empty JSON string
 - **Authentication methods where applicable**: Admin or associated user only (JWT bearer token authentication)
 
-### /users/<int:user_id>/reports
+### /users/&lt;int:user_id&gt;/reports
 - **HTTP request verb**: GET
 - **Required data where applicable**: N/A
 - **Expected response data**: '200 OK', reports, including aisle width, date created, id, image and store id
 - **Authentication methods where applicable**: Admin or associated user only (JWT bearer token authentication)
 
-### /users/register>
+### /users/register
 - **HTTP request verb**: POST
 - **Required data where applicable**: Email, password
 - **Expected response data**: '201 created', user email, id
@@ -99,25 +99,25 @@ Its benefits include reduced code cruft and increased productivity, as developer
 - **Expected response data**: '201 Created', store including id, name, address, suburb, state, email, phone number, aisle width
 - **Authentication methods where applicable**: Admin only (JWT bearer token authentication)
 
-### /stores/<int:store_id>
+### /stores/&lt;int:store_id&gt;
 - **HTTP request verb**: PUT, PATCH
 - **Required data where applicable**: Name, address, suburb, state, email, phone number or aisle width
 - **Expected response data**: '200 OK', store including id, name, address, suburb, state, email, phone number and aisle width
 - **Authentication methods where applicable**: Admin only (JWT bearer token authentication)
 
-### /stores/<int:store_id>
+### /stores/&lt;int:store_id&gt;
 - **HTTP request verb**: DELETE
 - **Required data where applicable**: N/A
 - **Expected response data**: '200 OK', empty JSON string
 - **Authentication methods where applicable**: Admin only (JWT bearer token authentication)
 
-### /stores/<int:user_id/reports>
+### /stores/&lt;int:user_id&gt;/reports
 - **HTTP request verb**: GET
 - **Required data where applicable**: N/A
 - **Expected response data**: '200 OK', reports, including aisle width, date created, id, image and store id
 - **Authentication methods where applicable**: Admin only (JWT bearer token authentication)
 
-### /stores/search?=<int:aisle_width_min>
+### /stores/search?=&lt;int:aisle_width_min&gt;
 - **HTTP request verb**: GET
 - **Required data where applicable**: N/A
 - **Expected response data**: '200 OK', stores with aisle width larger than `aisle_width_min`, including address, aisle width, email, store id, name, phone number, state and suburb
@@ -135,13 +135,13 @@ Its benefits include reduced code cruft and increased productivity, as developer
 - **Expected response data**: '201 Created', reports including aisle width, date created, image, store id, report id
 - **Authentication methods where applicable**: Admin or user only (JWT bearer token authentication)
 
-### /reports<int:report_id>
+### /reports&lt;int:report_id&gt;
 - **HTTP request verb**: PUT, PATCH
 - **Required data where applicable**: N/A
 - **Expected response data**: '200 OK',  aisle width, date created, image, store id, report id
 - **Authentication methods where applicable**: Admin or associated user only (JWT bearer token authentication)
 
-### /reports/<int:report_id>
+### /reports/&lt;int:report_id&gt;
 - **HTTP request verb**: DELETE
 - **Required data where applicable**: N/A
 - **Expected response data**: '200 OK', empty JSON string
@@ -178,13 +178,68 @@ Flask-JWT-Extended is a Python library that supports the use of JSON Web Tokens 
 
 
 ## Describe your projects models in terms of the relationships they have with each other
-SQLALCHEMY, FOREIGN KEYS
+### User
+The `users` SQLAlchemy model consists of the following class attributes:
+
+- <u>`id`: integer __[primary key]__</u>
+- `email`: string (unique and mandatory)
+- `password`: string (mandatory)
+- `is_admin`: boolean (False by default)
+
+It has a back-populating, one-to-many relationship with the `reports` model, . This relationship cascades on delete, meaning if a user is deleted, all of their associated reports are deleted too.
+
+### Store
+The `stores` SQLAlchemy model consists of the following class attributes:
+
+- <u>`id`: integer __[primary key]__</u>
+- `name`: string (unique and mandatory)
+- `address`: string (mandatory)
+- `suburb`: string (mandatory)
+- `state`: string (mandatory)
+- `email`: string
+- `phone_number`: string
+- `aisle_width`: integer
+
+It has a back-populating, one-to-many relationship with the `reports` model, . This relationship cascades on delete, meaning if a user is deleted, all of their associated reports are deleted too.
+
+### Reports
+The `reports` SQLAlchemy model consists of the following class attributes:
+
+- <u>`id`: integer __[primary key]__</u>
+- `aisle_width`: integer (mandatory)
+- `image`: string
+- `date_created`: date (defaults to today's date)
+- `user_id`: (mandatory) __[foreign key]__
+- `store_id`: (mandatory) __[foreign key]__
+
+It has a back-populating, many-to-one relationship with the `users` and `stores` models, through the use of foreign keys. This allows users to have many reports and stores to have many reports, but each report restricted to one and only one user and one and only one store.
+
 
 ## Discuss the database relations to be implemented in your application
-DATABASE LEVEL, SQL
-
 The CRAMPT database comprises three tables: `users`, `reports` and `stores`.
 
+The `users` table consists of the following attributes:
+- `id`: This is the primary key, which acts as a unique identifier for users in the database.
+- `email`: This is a string representing the user's email address, which allows for optional communications with users. While `id` is the unique identifier within the database, `email` is a unique identifier on the client side for the purposes of registering and logging in as a user. However, `email` is not used as the primary key in the database, as this is not secure and would contravene Australian privacy laws.
+- `password`: This is a string representing the user's password, which enables the database to authenticate and authorise users. It is not unique, as users may have the same passwords. For security purposes, the password is encrypted by bcrypt before it is stored on the database.
+- `is_admin`: This is a Boolean value indicating whether the user is an admin or not, which allows for authenticating users according to permissions. It is set to False by default.
+
+The `stores` table consists of the following attributes:
+- `id`: This is the primary key, which acts as a unique identifier for stores in the database.
+- `name`: This is a string representing a store's unique name. Most Chemist Warehouse store names begin with 'Chemist Warehouse' and end with the name of the suburb; however, this is not always the case – e.g., 'Airport West Pharmacy', 'Discount Chemist Langwarrin', 'Australian Open Pop-Up' – so further database normalisation for `name` is not feasible.
+- `address`: This is a string representing a store's street address. It is the atomic value for addresses, despite containing different datatypes (e.g., integers for street numbers and strings for street names). For example, some street numbers are not purely integers (e.g., 'Shop SP032 Cranbourne Park', 'G089 Bayside Shopping Centre', '36 to 38 Eaton Mall', etc.).
+- `suburb`: This is a string representing a store's suburb.
+- `email`: This is a string representing a store's email address.
+- `phone_number`: This is a string representing a store's phone number. Even though it contains only digits, it is not considered as an integer, as it may contain leading zeroes, which have no mathematical value.
+- `aisle_width`: This is an integer representing a store's aisle width, in centimetres.
+
+The `reports` table consists of the following attributes:
+- `id`: This is the primary key, which acts as a unique identifier for stores in the database.
+- `aisle_width`: This is an integer representing a report of a store's aisle width, in centimetres.
+- `image`: This is a string representing a URL providing evidence for a report.
+- `date_created`: This is a date representing the date of the report's creation. It defaults to the date a report is created.
+- `user_id`: This is an integer foreign key that maps to the `id` attribute in the `users` table, linking reports with a unique user tuple. This manages a many-to-one relationship between `reports` and `users`, with users able to have many reports, but each report connecting to one and only one user.
+ - `store_id`: This is an integer foreign key that maps to the `id` attribute in the `stores` table, linking reports with a unique store tuple. This manages a many-to-one relationship between `reports` and `stores`, with stores able to have many reports, but each report connecting to one and only one store.
 
 ## Describe the way tasks are allocated and tracked in your project
 Tasks were allocated and tracked using the project management tool Linear. 
@@ -248,4 +303,3 @@ Detailed information about the daily progress of each task has been captured in 
 [8 December 2023](/docs/Kanban_20231208.md)
 
 [12 December 2023](/docs/Kanban_20231212.md)
-
